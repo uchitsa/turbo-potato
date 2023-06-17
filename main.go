@@ -27,7 +27,7 @@ func main() {
 	}
 	defer file.Close()
 
-	res := make(map[string]bool)
+	res := make(map[string]float64)
 
 	ntp := NewTransport()
 	client := &http.Client{Transport: ntp}
@@ -45,12 +45,15 @@ func main() {
 		}
 		line = cutEndOfLine(line)
 
-		res[line] = ping(line)
 		resp, err := client.Get(line)
 		if err != nil {
 			log.Fatalf("get url error: %v", err)
 		}
 		resp.Body.Close()
+
+		res[line] = ntp.Duration().Seconds()
+		fmt.Printf("URL: %s duration:%d", line, ntp.Duration())
+
 	}
 
 	for k, v := range res {
@@ -97,4 +100,8 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	t.reqEnd = time.Now()
 
 	return response, nil
+}
+
+func (t *transport) Duration() time.Duration {
+	return t.reqEnd.Sub(t.reqStart)
 }
