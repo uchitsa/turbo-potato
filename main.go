@@ -43,19 +43,17 @@ func main() {
 			log.Fatalf("read file line error: %v", err)
 			return
 		}
-		line = cutEndOfLine(line)
+		line = getURL(line)
 
 		resp, err := client.Get(line)
 		if err != nil {
-			log.Fatalf("get url error: %v", err)
+			res[line] = 0
+			continue
 		}
 		resp.Body.Close()
 
 		res[line] = ntp.Duration().Seconds()
 		fmt.Printf("URL: %s duration:%f sec\n", line, ntp.Duration().Seconds())
-		fmt.Printf("URL: %s connection duration:%f sec\n", line, ntp.ConnDuration().Seconds())
-		fmt.Printf("URL: %s request duration:%f sec\n", line, ntp.ReqDuration().Seconds())
-
 	}
 
 	for k, v := range res {
@@ -63,8 +61,8 @@ func main() {
 	}
 }
 
-func cutEndOfLine(line string) string {
-	return line[:len(line)-1]
+func getURL(line string) string {
+	return fmt.Sprintf("https://www.%s", line[:len(line)-1])
 }
 
 func NewTransport() *transport {
@@ -96,14 +94,6 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 func (t *transport) Duration() time.Duration {
 	return t.reqEnd.Sub(t.reqStart)
-}
-
-func (t *transport) ConnDuration() time.Duration {
-	return t.connEnd.Sub(t.connStart)
-}
-
-func (t *transport) ReqDuration() time.Duration {
-	return t.Duration() - t.ConnDuration()
 }
 
 func (t *transport) dial(network, addr string) (net.Conn, error) {
