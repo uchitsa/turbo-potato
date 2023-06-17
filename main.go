@@ -52,8 +52,9 @@ func main() {
 		resp.Body.Close()
 
 		res[line] = ntp.Duration().Seconds()
-		fmt.Printf("URL: %s duration:%d", line, ntp.Duration())
-		fmt.Printf("URL: %s connection duration:%d", line, ntp.ConnDuration())
+		fmt.Printf("URL: %s duration:%f sec\n", line, ntp.Duration().Seconds())
+		fmt.Printf("URL: %s connection duration:%f sec\n", line, ntp.ConnDuration().Seconds())
+		fmt.Printf("URL: %s request duration:%f sec\n", line, ntp.ReqDuration().Seconds())
 
 	}
 
@@ -109,4 +110,8 @@ func (t *transport) Duration() time.Duration {
 
 func (t *transport) ConnDuration() time.Duration {
 	return t.connEnd.Sub(t.connStart)
+}
+
+func (t *transport) ReqDuration() time.Duration {
+	return t.Duration() - t.ConnDuration()
 }
