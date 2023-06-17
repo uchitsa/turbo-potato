@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net"
 	"net/http"
 	"os"
@@ -61,6 +62,8 @@ func main() {
 	for k, v := range res {
 		log.Printf("site: %s available: %v\n", k, v)
 	}
+
+	fmt.Println("Minimal duration: ", getMinimalDuration(res))
 }
 
 func getURL(line string) string {
@@ -107,4 +110,15 @@ func (t *transport) dial(network, addr string) (net.Conn, error) {
 	t.connEnd = time.Now()
 
 	return conn, nil
+}
+
+func getMinimalDuration(m map[string]float64) float64 {
+	min := math.MaxFloat64
+	for _, v := range m {
+		if v != timeUnavailableURL && v < min {
+			min = v
+		}
+	}
+
+	return min
 }
