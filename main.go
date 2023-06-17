@@ -53,6 +53,7 @@ func main() {
 
 		res[line] = ntp.Duration().Seconds()
 		fmt.Printf("URL: %s duration:%d", line, ntp.Duration())
+		fmt.Printf("URL: %s connection duration:%d", line, ntp.ConnDuration())
 
 	}
 
@@ -104,4 +105,8 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 func (t *transport) Duration() time.Duration {
 	return t.reqEnd.Sub(t.reqStart)
+}
+
+func (t *transport) ConnDuration() time.Duration {
+	return t.connEnd.Sub(t.connStart)
 }
