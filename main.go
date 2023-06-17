@@ -20,6 +20,8 @@ type transport struct {
 	reqEnd    time.Time
 }
 
+const timeUnavailableURL = 0
+
 func main() {
 	file, err := os.Open("sites.txt")
 	if err != nil {
@@ -47,7 +49,7 @@ func main() {
 
 		resp, err := client.Get(line)
 		if err != nil {
-			res[line] = 0
+			res[line] = timeUnavailableURL
 			continue
 		}
 		resp.Body.Close()
