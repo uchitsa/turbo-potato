@@ -29,6 +29,9 @@ func main() {
 
 	res := make(map[string]bool)
 
+	ntp := NewTransport()
+	_ = &http.Client{Transport: ntp}
+
 	r := bufio.NewReader(file)
 	for {
 		line, err := r.ReadString('\n')
@@ -43,9 +46,6 @@ func main() {
 		line = cutEndOfLine(line)
 		res[line] = ping(line)
 	}
-
-	ntp := NewTransport()
-	_ = &http.Client{Transport: ntp}
 
 	for k, v := range res {
 		log.Printf("site: %s available: %v\n", k, v)
