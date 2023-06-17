@@ -30,7 +30,7 @@ func main() {
 	res := make(map[string]bool)
 
 	ntp := NewTransport()
-	_ = &http.Client{Transport: ntp}
+	client := &http.Client{Transport: ntp}
 
 	r := bufio.NewReader(file)
 	for {
@@ -44,7 +44,13 @@ func main() {
 			return
 		}
 		line = cutEndOfLine(line)
+
 		res[line] = ping(line)
+		resp, err := client.Get(line)
+		if err != nil {
+			log.Fatalf("get url error: %v", err)
+		}
+		resp.Body.Close()
 	}
 
 	for k, v := range res {
