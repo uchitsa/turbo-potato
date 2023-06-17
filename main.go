@@ -6,9 +6,19 @@ import (
 	"io"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"time"
 )
+
+type transport struct {
+	dialer    *net.Dialer
+	rt        http.RoundTripper
+	connStart time.Time
+	connEnd   time.Time
+	reqStart  time.Time
+	reqEnd    time.Time
+}
 
 func main() {
 	file, err := os.Open("sites.txt")
