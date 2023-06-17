@@ -44,6 +44,9 @@ func main() {
 		res[line] = ping(line)
 	}
 
+	ntp := NewTransport()
+	_ = &http.Client{Transport: ntp}
+
 	for k, v := range res {
 		log.Printf("site: %s available: %v\n", k, v)
 	}
@@ -64,4 +67,22 @@ func ping(url string) bool {
 	defer conn.Close()
 
 	return true
+}
+
+func NewTransport() *transport {
+	return &transport{
+		dialer: &net.Dialer{
+			Timeout:   15 * time.Second,
+			KeepAlive: 15 * time.Second,
+		},
+		rt: &http.Transport{
+			Proxy:               http.ProxyFromEnvironment,
+			TLSHandshakeTimeout: 10 * time.Second,
+		},
+	}
+}
+
+func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
+	//TODO implement me
+	panic("implement me")
 }
