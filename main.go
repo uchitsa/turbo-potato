@@ -67,19 +67,6 @@ func cutEndOfLine(line string) string {
 	return line[:len(line)-1]
 }
 
-func ping(url string) bool {
-	timeout := 3 * time.Second
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:80", url), timeout)
-	if err != nil {
-		log.Println("site unreachable error: ", err)
-		return false
-	}
-
-	defer conn.Close()
-
-	return true
-}
-
 func NewTransport() *transport {
 	t := &transport{
 		dialer: &net.Dialer{
