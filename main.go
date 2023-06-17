@@ -83,6 +83,12 @@ func NewTransport() *transport {
 }
 
 func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
-	//TODO implement me
-	panic("implement me")
+	t.reqStart = time.Now()
+	response, err := t.rt.RoundTrip(req)
+	if err != nil {
+		return nil, err
+	}
+	t.reqEnd = time.Now()
+
+	return response, nil
 }
