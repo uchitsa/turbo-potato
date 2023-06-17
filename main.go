@@ -81,16 +81,19 @@ func ping(url string) bool {
 }
 
 func NewTransport() *transport {
-	return &transport{
+	t := &transport{
 		dialer: &net.Dialer{
 			Timeout:   15 * time.Second,
 			KeepAlive: 15 * time.Second,
 		},
-		rt: &http.Transport{
-			Proxy:               http.ProxyFromEnvironment,
-			TLSHandshakeTimeout: 10 * time.Second,
-		},
 	}
+	t.rt = &http.Transport{
+		Dial:                t.dial,
+		Proxy:               http.ProxyFromEnvironment,
+		TLSHandshakeTimeout: 10 * time.Second,
+	}
+
+	return t
 }
 
 func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -114,4 +117,15 @@ func (t *transport) ConnDuration() time.Duration {
 
 func (t *transport) ReqDuration() time.Duration {
 	return t.Duration() - t.ConnDuration()
+}
+
+func (t *transport) dial(network, addr string) (net.Conn, error) {
+	t.connStart = time.Now()
+	conn, err := t.dialer.Dial(network, addr)
+	if err != nil {
+		return nil, err
+	}
+	t.connEnd = time.Now()
+
+	return conn, nil
 }
