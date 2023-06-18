@@ -64,6 +64,7 @@ func main() {
 	}
 
 	fmt.Println("Minimal duration: ", getMinimalDuration(res))
+	fmt.Println("Maximal duration: ", getMaximalDuration(res))
 }
 
 func getURL(line string) string {
@@ -121,4 +122,14 @@ func getMinimalDuration(m map[string]float64) float64 {
 	}
 
 	return min
+}
+func getMaximalDuration(m map[string]float64) float64 {
+	max := float64(0)
+	for _, v := range m {
+		if v > max {
+			max = v
+		}
+	}
+
+	return max
 }
