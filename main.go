@@ -60,18 +60,22 @@ func readFileSuccess(file *os.File, client *http.Client, res map[string]float64,
 			return true
 		}
 		line = getURL(line)
+		res[line] = timeUnavailableURL
 
-		resp, err := client.Get(line)
-		if err != nil {
-			res[line] = timeUnavailableURL
-			continue
-		}
-		resp.Body.Close()
-
-		res[line] = ntp.Duration().Seconds()
-		fmt.Printf("URL: %s duration:%f sec\n", line, ntp.Duration().Seconds())
+		checkSite(err, client, line, res, ntp)
 	}
 	return false
+}
+
+func checkSite(err error, client *http.Client, url string, res map[string]float64, ntp *transport) {
+	resp, err := client.Get(url)
+	if err != nil {
+		log.Printf("get site error: %v", err)
+	}
+	resp.Body.Close()
+
+	res[url] = ntp.Duration().Seconds()
+	fmt.Printf("URL: %s duration:%f sec\n", url, ntp.Duration().Seconds())
 }
 
 func getURL(line string) string {
