@@ -35,6 +35,19 @@ func main() {
 	ntp := NewTransport()
 	client := &http.Client{Transport: ntp}
 
+	if readFileSuccess(file, client, res, ntp) {
+		return
+	}
+
+	for k, v := range res {
+		log.Printf("site: %s available: %v\n", k, v)
+	}
+
+	fmt.Println("Minimal duration: ", getMinimalDuration(res))
+	fmt.Println("Maximal duration: ", getMaximalDuration(res))
+}
+
+func readFileSuccess(file *os.File, client *http.Client, res map[string]float64, ntp *transport) bool {
 	r := bufio.NewReader(file)
 	for {
 		line, err := r.ReadString('\n')
@@ -44,7 +57,7 @@ func main() {
 			}
 
 			log.Fatalf("read file line error: %v", err)
-			return
+			return true
 		}
 		line = getURL(line)
 
@@ -58,13 +71,7 @@ func main() {
 		res[line] = ntp.Duration().Seconds()
 		fmt.Printf("URL: %s duration:%f sec\n", line, ntp.Duration().Seconds())
 	}
-
-	for k, v := range res {
-		log.Printf("site: %s available: %v\n", k, v)
-	}
-
-	fmt.Println("Minimal duration: ", getMinimalDuration(res))
-	fmt.Println("Maximal duration: ", getMaximalDuration(res))
+	return false
 }
 
 func getURL(line string) string {
