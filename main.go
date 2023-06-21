@@ -39,7 +39,7 @@ func main() {
 		return
 	}
 
-	checkSite(client, res, ntp)
+	checkSiteв(client, res, ntp)
 
 	for k, v := range res {
 		log.Printf("site: %s available: %v\n", k, v)
@@ -68,7 +68,7 @@ func readFileSuccess(file *os.File, client *http.Client, res map[string]float64,
 	return false
 }
 
-func checkSite(client *http.Client, sites map[string]float64, ntp *transport) {
+func checkSiteв(client *http.Client, sites map[string]float64, ntp *transport) {
 	for url, _ := range sites {
 		resp, err := client.Get(url)
 		if err != nil {
