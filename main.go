@@ -41,6 +41,10 @@ func main() {
 
 	checkSites(client, res, ntp)
 
+	printCheckResults(res)
+}
+
+func printCheckResults(res map[string]float64) {
 	for k, v := range res {
 		log.Printf("site: %s available: %v\n", k, v)
 	}
