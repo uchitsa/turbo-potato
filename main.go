@@ -90,7 +90,7 @@ func readFileSuccess(file *os.File, client *http.Client, res map[string]float64,
 }
 
 func checkSites(client *http.Client, sites map[string]float64, ntp *transport) {
-	for url, _ := range sites {
+	for url := range sites {
 		resp, err := client.Get(url)
 		if err != nil {
 			log.Printf("get site error: %v", err)
