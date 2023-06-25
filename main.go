@@ -35,7 +35,7 @@ func main() {
 	ntp := NewTransport()
 	client := &http.Client{Transport: ntp}
 
-	if readFileSuccess(file, client, res, ntp) {
+	if readFileSuccess(file, res) {
 		return
 	}
 
@@ -70,7 +70,7 @@ func printCheckResults(res map[string]float64) {
 	fmt.Println("Maximal duration: ", getMaximalDuration(res))
 }
 
-func readFileSuccess(file *os.File, client *http.Client, res map[string]float64, ntp *transport) bool {
+func readFileSuccess(file *os.File, res map[string]float64) bool {
 	r := bufio.NewReader(file)
 	for {
 		line, err := r.ReadString('\n')
