@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -56,7 +57,16 @@ func main() {
 	ticker.Stop()
 	done <- true
 
-	checkSites(client, res, ntp)
+	var wg sync.WaitGroup
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+
+		go func() {
+			defer wg.Done()
+			checkSites(client, res, ntp)
+		}()
+	}
+	wg.Wait()
 
 	printCheckResults(res)
 }
